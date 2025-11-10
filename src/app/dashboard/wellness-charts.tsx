@@ -18,40 +18,18 @@ import {
   ChartStyle,
 } from "@/components/ui/chart";
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
   Line,
   LineChart,
   Pie,
   PieChart,
   XAxis,
   YAxis,
+  CartesianGrid,
 } from "recharts";
 import type { ChartConfig } from "@/components/ui/chart";
-import { emotionCategories, thoughtPatterns as thoughtPatternConfig } from "@/lib/data";
+import { thoughtPatterns as thoughtPatternConfig } from "@/lib/data";
 import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
-
-const L2Emotions = emotionCategories.flatMap(cat => cat.subCategories);
-
-const emotionChartConfig = L2Emotions.reduce((acc, emotion) => {
-    const category = emotionCategories.find(c => c.subCategories.some(sc => sc.name === emotion.name));
-    acc[emotion.name] = {
-        label: emotion.name,
-        color: category?.color || '#ccc',
-    };
-    return acc;
-}, {} as ChartConfig);
-
-const emotionLegendConfig = emotionCategories.reduce((acc, category) => {
-    acc[category.name] = {
-        label: category.name,
-        color: category.color,
-    };
-    return acc;
-}, {} as ChartConfig);
-
 
 const thoughtChartConfig = thoughtPatternConfig.reduce((acc, pattern) => {
   acc[pattern.id] = {
@@ -60,36 +38,25 @@ const thoughtChartConfig = thoughtPatternConfig.reduce((acc, pattern) => {
   return acc;
 }, {} as ChartConfig);
 
-
 export function WellnessCharts() {
   const { logEntries } = useWellnessLog();
 
-  const emotionFrequency = useMemo(() => {
-    const emotionCounts: {[key: string]: number} = {};
-    logEntries.forEach(entry => {
-        emotionCounts[entry.emotion] = (emotionCounts[entry.emotion] || 0) + 1;
-    });
-    return L2Emotions.map(emotion => ({
-      emotion: emotion.name,
-      count: emotionCounts[emotion.name] || 0,
-      fill: emotionChartConfig[emotion.name]?.color
-    })).filter(e => e.count > 0);
-  }, [logEntries]);
-
   const sensationTimeline = useMemo(() => {
     return logEntries
-      .flatMap(entry => entry.sensations.map(sensation => ({
-        date: entry.date,
-        intensity: sensation.intensity,
-        location: sensation.location,
-      })))
-      .sort((a,b) => parseISO(a.date).getTime() - parseISO(b.date).getTime())
-      .map(s => ({
+      .flatMap((entry) =>
+        entry.sensations.map((sensation) => ({
+          date: entry.date,
+          intensity: sensation.intensity,
+          location: sensation.location,
+        }))
+      )
+      .sort((a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime())
+      .map((s) => ({
         ...s,
-        date: format(parseISO(s.date), 'MMM d')
+        date: format(parseISO(s.date), "MMM d"),
       }));
   }, [logEntries]);
-  
+
   const thoughtPatternFrequency = useMemo(() => {
     const counts: { [key: string]: number } = {};
     for (const entry of logEntries) {
@@ -97,58 +64,32 @@ export function WellnessCharts() {
         counts[thought] = (counts[thought] || 0) + 1;
       }
     }
-    return thoughtPatternConfig.map(pattern => ({
-      name: pattern.label,
-      value: counts[pattern.id] || 0,
-      fill: `hsl(var(--chart-${(thoughtPatternConfig.indexOf(pattern) % 5) + 1}))`,
-    }));
+    return thoughtPatternConfig
+      .map((pattern) => ({
+        name: pattern.label,
+        value: counts[pattern.id] || 0,
+        fill: `hsl(var(--chart-${
+          (thoughtPatternConfig.indexOf(pattern) % 5) + 1
+        }))`,
+      }))
+      .filter((item) => item.value > 0);
   }, [logEntries]);
 
   if (logEntries.length === 0) {
     return (
       <Card className="w-full py-20">
         <CardContent className="text-center">
-          <p className="text-muted-foreground">No data yet. Start by adding a new check-in entry.</p>
+          <p className="text-muted-foreground">
+            No data yet. Start by adding a new check-in entry.
+          </p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
-      <Card className="lg:col-span-1">
-        <CardHeader>
-          <CardTitle>Emotion Frequency</CardTitle>
-          <CardDescription>
-            How often you've felt each emotion.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={emotionChartConfig} className="min-h-[160px] w-full">
-            <BarChart accessibilityLayer data={emotionFrequency}>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="emotion"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                interval={0}
-                tick={{ fontSize: 12, angle: -45, textAnchor: 'end' }}
-                height={60}
-              />
-              <YAxis />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-               <ChartLegend content={<ChartLegendContent nameKey="name" payload={emotionCategories.map(cat => ({ value: cat.name, color: cat.color, type: 'square' }))} />} />
-              <Bar dataKey="count" radius={4} barSize={20} />
-            </BarChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
-
-      <Card className="lg:col-span-3">
+    <div className="grid gap-6 sm:grid-cols-1">
+      <Card>
         <CardHeader>
           <CardTitle>Sensation Intensity Over Time</CardTitle>
           <CardDescription>
@@ -156,7 +97,7 @@ export function WellnessCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={{}} className="min-h-[160px] w-full">
+          <ChartContainer config={{}} className="min-h-[250px] w-full">
             <LineChart
               accessibilityLayer
               data={sensationTimeline}
@@ -180,7 +121,7 @@ export function WellnessCharts() {
         </CardContent>
       </Card>
 
-       <Card className="lg:col-span-4">
+      <Card>
         <CardHeader>
           <CardTitle>Thought Patterns</CardTitle>
           <CardDescription>
@@ -188,30 +129,30 @@ export function WellnessCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
-            <ChartContainer
-                config={thoughtChartConfig}
-                className="mx-auto aspect-square max-h-[300px]"
-            >
-                <PieChart>
-                <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                />
-                <Pie
-                    data={thoughtPatternFrequency}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={60}
-                    strokeWidth={5}
-                >
-                    <ChartStyle />
-                </Pie>
-                <ChartLegend
-                    content={<ChartLegendContent nameKey="name" />}
-                    className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-                />
-                </PieChart>
-            </ChartContainer>
+          <ChartContainer
+            config={thoughtChartConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={thoughtPatternFrequency}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={60}
+                strokeWidth={5}
+              >
+                <ChartStyle />
+              </Pie>
+              <ChartLegend
+                content={<ChartLegendContent nameKey="name" />}
+                className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+              />
+            </PieChart>
+          </ChartContainer>
         </CardContent>
       </Card>
     </div>
