@@ -115,8 +115,8 @@ export function WellnessCharts() {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
-      <Card>
+    <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-4">
+      <Card className="lg:col-span-1">
         <CardHeader>
           <CardTitle>Emotion Frequency</CardTitle>
           <CardDescription>
@@ -148,7 +148,7 @@ export function WellnessCharts() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="lg:col-span-3">
         <CardHeader>
           <CardTitle>Sensation Intensity Over Time</CardTitle>
           <CardDescription>
@@ -180,7 +180,7 @@ export function WellnessCharts() {
         </CardContent>
       </Card>
 
-       <Card className="lg:col-span-2">
+       <Card className="lg:col-span-4">
         <CardHeader>
           <CardTitle>Thought Patterns</CardTitle>
           <CardDescription>
