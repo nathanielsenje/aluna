@@ -61,13 +61,16 @@ const formSchema = z.object({
 
 type CheckInFormValues = z.infer<typeof formSchema>;
 
-function StepSection({ children, className }: { children: React.ReactNode, className?: string }) {
+const StepSection = React.forwardRef<HTMLDivElement, { children: React.ReactNode, className?: string }>(
+    ({ children, className }, ref) => {
     return (
-        <section className={`h-screen w-screen flex flex-col p-4 sm:p-6 snap-start relative ${className}`}>
+        <section ref={ref} className={`h-screen w-screen flex flex-col p-4 sm:p-6 snap-start relative ${className}`}>
             {children}
         </section>
     )
-}
+});
+StepSection.displayName = 'StepSection';
+
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -454,5 +457,6 @@ export function CheckInForm() {
     </Form>
   );
 }
+    
 
     
