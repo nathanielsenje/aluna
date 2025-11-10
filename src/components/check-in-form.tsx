@@ -171,7 +171,7 @@ export function CheckInForm() {
                     <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mb-8">
                         Scan your body. Note any physical sensations, their location, and intensity.
                     </p>
-                    <Card className="w-full max-w-xl bg-background/80 backdrop-blur-sm border-0 shadow-none rounded-2xl flex flex-col h-auto max-h-[60vh]">
+                    <Card className="w-full max-w-2xl bg-background/80 backdrop-blur-sm border-0 shadow-none rounded-2xl flex flex-col h-auto max-h-[60vh]">
                         <CardContent className="flex-1 grid md:grid-cols-2 gap-x-8 gap-y-4 p-6 overflow-hidden">
                           {/* Left: Editor */}
                           <div className="flex flex-col gap-4 text-left">
