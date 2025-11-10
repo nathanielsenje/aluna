@@ -148,7 +148,7 @@ export const initialLogEntries: LogEntry[] = [
   },
   {
     id: "4",
-    date: subDays(new date(), 2).toISOString(),
+    date: subDays(new Date(), 2).toISOString(),
     emotion: "Excited",
     specificEmotions: ["Eager", "Thrilled"],
     sensations: [
@@ -158,7 +158,7 @@ export const initialLogEntries: LogEntry[] = [
   },
   {
     id: "5",
-    date: subDays(new date(), 1).toISOString(),
+    date: subDays(new Date(), 1).toISOString(),
     emotion: "Frustrated",
     specificEmotions: ["Irritated", "Annoyed"],
     sensations: [
