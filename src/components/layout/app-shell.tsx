@@ -25,14 +25,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <Sidebar collapsible="icon">
-        <SidebarHeader>
-          <div className="flex items-center gap-2 p-2 pr-4">
-            <Icons.logo className="size-8 text-primary" />
-            <span className="text-lg font-semibold">Mindful Charts</span>
-          </div>
-        </SidebarHeader>
-        <SidebarContent>
+      <Sidebar variant="floating" collapsible="icon">
+        <SidebarContent className="mt-14">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
@@ -62,12 +56,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </SidebarContent>
       </Sidebar>
       <SidebarInset className="flex flex-col">
-        <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6 md:hidden">
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Icons.logo className="size-6 text-primary" />
-            <span className="sr-only">Mindful Charts</span>
+            <span>Mindful Charts</span>
           </Link>
-          <SidebarTrigger />
+          <SidebarTrigger className="md:hidden"/>
         </header>
         <main className="flex-1 overflow-y-auto">{children}</main>
       </SidebarInset>
