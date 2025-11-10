@@ -63,7 +63,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
           <SidebarTrigger className="md:hidden"/>
         </header>
-        <main className="flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 flex flex-col">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
