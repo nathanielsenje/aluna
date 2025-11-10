@@ -7,7 +7,7 @@ import * as React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { HumanBody } from "@/components/human-body";
+import { HumanBodyWrapper } from "@/components/human-body-wrapper";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -178,7 +178,7 @@ export function CheckInForm() {
                      <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-full">
                        <CardContent className="flex-1 flex flex-col gap-4 p-4 sm:p-6 overflow-hidden">
                         <div className="relative w-full aspect-square mb-4 flex-shrink-0">
-                           <HumanBody
+                           <HumanBodyWrapper
                                 onClick={handleBodyPartClick}
                            />
                         </div>
@@ -477,3 +477,5 @@ export function CheckInForm() {
     </Form>
   );
 }
+
+    
