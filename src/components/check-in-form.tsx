@@ -66,8 +66,8 @@ type CheckInFormValues = z.infer<typeof formSchema>;
 
 function StepCard({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex flex-col h-full w-full items-center justify-center p-2 sm:p-4 md:p-6">
-            <Card className="w-full h-full flex flex-col">
+        <div className="flex flex-col h-full w-full items-center justify-center p-4">
+            <Card className="w-full max-w-4xl aspect-[16/9] flex flex-col border-0">
                 {children}
             </Card>
         </div>
@@ -435,5 +435,3 @@ export function CheckInForm() {
     </Form>
   );
 }
-
-    
