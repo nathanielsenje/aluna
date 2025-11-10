@@ -16,12 +16,10 @@ export function HumanBodyWrapper(props: HumanBodyWrapperProps) {
     }, []);
 
     if (!isClient) {
-        return <div className="w-full h-full aspect-square" aria-hidden="true" />;
+        return <div className="w-full h-full aspect-[4/5]" aria-hidden="true" />;
     }
 
     return <HumanBody {...props} />;
 }
-
-    
 
     

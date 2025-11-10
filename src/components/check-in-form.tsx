@@ -44,7 +44,6 @@ import { ScrollArea } from "./ui/scroll-area";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from 'next/image';
 import { Input } from "./ui/input";
-import { HumanBodyWrapper } from "./human-body-wrapper";
 
 const sensationSchema = z.object({
   id: z.string(),
@@ -138,10 +137,10 @@ export function CheckInForm() {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleBodyPartClick = (part: {slug: string, title: string}) => {
+  const addNewSensation = () => {
     append({
         id: `sensation-${Date.now()}`,
-        location: part.title,
+        location: "",
         intensity: 5,
         notes: "",
     });
@@ -152,115 +151,107 @@ export function CheckInForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="h-screen snap-y snap-mandatory overflow-y-scroll overflow-x-hidden">
         
         <StepSection ref={sensationRef}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
-                <div className="p-4 md:p-8 h-full flex flex-col justify-center">
-                    <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">Where Do You Feel It?</h1>
-                    <p className="text-base sm:text-lg text-gray-600">
-                        Click on the body graphic to log a sensation. Reflect on your body and identify{" "}
-                        <span className="font-semibold">specific areas</span> where you experience discomfort or tension right now.
-                    </p>
-                </div>
+            <div className="flex flex-col items-center justify-center h-full text-center">
+                <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4">Where Do You Feel It?</h1>
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mb-8">
+                    Take a moment to scan your body. Add any physical sensations you notice, specifying the location, intensity, and any descriptive notes.
+                </p>
 
-                <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full overflow-hidden">
-                    <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-full">
-                        <CardContent className="flex-1 flex flex-col gap-4 p-4 sm:p-6 overflow-hidden">
-                           <div className="w-full h-[300px] relative">
-                                <HumanBodyWrapper onClick={handleBodyPartClick} />
-                            </div>
-
-                            {fields.length > 0 && (
-                                <div className="flex-grow overflow-hidden">
-                                <ScrollArea className="h-full">
-                                <AnimatePresence>
-                                {fields.map((field, index) => (
-                                <motion.div
-                                    key={field.id}
-                                    layout
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="p-3 border rounded-lg bg-white/70 mb-2"
-                                >
-                                    <div className="flex gap-4 items-start">
-                                    <div className="grid gap-3 flex-1 w-full">
-                                    <FormField
-                                        control={form.control}
-                                        name={`sensations.${index}.location`}
-                                        render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Location</FormLabel>
-                                            <Select
-                                            onValueChange={field.onChange}
-                                            defaultValue={field.value}
+                <Card className="w-full max-w-3xl bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-auto max-h-[60vh]">
+                     <CardContent className="p-6 flex-1 flex flex-col gap-4 overflow-hidden">
+                        <Button type="button" onClick={addNewSensation}>+ Add Sensation</Button>
+                        
+                        {fields.length > 0 && (
+                            <div className="flex-grow overflow-hidden mt-4">
+                                <ScrollArea className="h-full pr-4">
+                                    <AnimatePresence>
+                                        {fields.map((field, index) => (
+                                            <motion.div
+                                                key={field.id}
+                                                layout
+                                                initial={{ opacity: 0, y: -20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, x: -20 }}
+                                                className="p-4 border rounded-lg bg-white/70 mb-3"
                                             >
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                <SelectValue placeholder="Select a body part" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {bodyParts.map((part) => (
-                                                <SelectItem key={part} value={part}>
-                                                    {part}
-                                                </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name={`sensations.${index}.intensity`}
-                                        render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Intensity: {field.value ?? 5}</FormLabel>
-                                            <FormControl>
-                                            <Slider
-                                                value={[field.value]}
-                                                max={10}
-                                                step={1}
-                                                onValueChange={(vals) => field.onChange(vals[0])}
-                                            />
-                                            </FormControl>
-                                        </FormItem>
-                                        )}
-                                    />
-                                    </div>
-                                    <FormField
-                                        control={form.control}
-                                        name={`sensations.${index}.notes`}
-                                        render={({ field }) => (
-                                        <FormItem className="flex-1">
-                                            <FormLabel>Sensation Notes</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="e.g., tingling, sharp pain, warmth" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                        )}
-                                    />
-                                    <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="shrink-0 mt-6"
-                                    onClick={() => remove(index)}
-                                    >
-                                    <Trash2 className="h-4 w-4" />
-                                    <span className="sr-only">Remove sensation</span>
-                                    </Button>
-                                    </div>
-                                </motion.div>
-                                ))}
-                                </AnimatePresence>
+                                                <div className="flex flex-col sm:flex-row gap-4 items-start">
+                                                    <div className="grid gap-4 flex-1 w-full">
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`sensations.${index}.location`}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Location</FormLabel>
+                                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                        <FormControl>
+                                                                            <SelectTrigger>
+                                                                                <SelectValue placeholder="Select a body part" />
+                                                                            </SelectTrigger>
+                                                                        </FormControl>
+                                                                        <SelectContent>
+                                                                            {bodyParts.map((part) => (
+                                                                                <SelectItem key={part} value={part}>
+                                                                                    {part}
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`sensations.${index}.intensity`}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Intensity: {field.value ?? 5}</FormLabel>
+                                                                    <FormControl>
+                                                                        <Slider
+                                                                            value={[field.value]}
+                                                                            max={10}
+                                                                            step={1}
+                                                                            onValueChange={(vals) => field.onChange(vals[0])}
+                                                                        />
+                                                                    </FormControl>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 w-full grid gap-4">
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`sensations.${index}.notes`}
+                                                            render={({ field }) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Sensation Notes</FormLabel>
+                                                                    <FormControl>
+                                                                        <Input placeholder="e.g., tingling, sharp pain, warmth" {...field} />
+                                                                    </FormControl>
+                                                                    <FormMessage />
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="shrink-0 mt-0 sm:mt-6"
+                                                        onClick={() => remove(index)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                        <span className="sr-only">Remove sensation</span>
+                                                    </Button>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
                                 </ScrollArea>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
             <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex justify-center">
                 <Button type="button" size="icon" variant="ghost" className="rounded-full h-12 w-12 animate-bounce" onClick={() => scrollTo(emotionRef)}>
