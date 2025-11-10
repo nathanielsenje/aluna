@@ -41,7 +41,6 @@ import { useWellnessLog } from "@/context/wellness-log-provider";
 import { useRouter } from "next/navigation";
 import { EmotionWheelWrapper } from "./emotion-wheel-wrapper";
 import { ScrollArea } from "./ui/scroll-area";
-import Image from 'next/image';
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 
@@ -268,99 +267,107 @@ export function CheckInForm() {
 
         {/* Step 2: Emotions */}
         <StepSection ref={emotionRef}>
-            <div className="flex flex-col h-full">
-                <CardHeader className="text-center">
-                    <CardTitle className="font-extrabold text-4xl sm:text-5xl tracking-tighter">Select Your Emotion</CardTitle>
-                    <CardDescription className="max-w-md mx-auto">
-                        First, pick a broad category from the outer wheel, then a specific feeling from the inner wheel.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1 grid md:grid-cols-2 gap-4 md:gap-8 items-center overflow-hidden">
-                    <div className="relative w-full h-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] max-h-[300px] sm:max-h-[400px] md:max-h-[500px] mx-auto aspect-square">
-                        <FormField
-                            control={form.control}
-                            name="emotion"
-                            render={({ field }) => (
-                                <FormItem className="w-full h-full">
-                                <FormControl>
-                                    <EmotionWheelWrapper
-                                    selectedEmotion={field.value}
-                                    onSelectEmotion={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormMessage className="text-center absolute -bottom-4 left-0 right-0" />
-                                </FormItem>
-                            )}
-                        />
+            <div className="flex flex-col items-center justify-center text-center h-full relative">
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative w-full max-w-lg h-96">
+                        <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-purple-600 to-teal-400 rounded-full blur-3xl opacity-50"></div>
                     </div>
-                    
-                    <AnimatePresence>
-                        {specificEmotionsOptions.length > 0 && (
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="h-full flex flex-col justify-center"
-                        >
-                            <ScrollArea className="pr-4">
-                            <FormField
-                            control={form.control}
-                            name="specificEmotions"
-                            render={() => (
-                                <FormItem>
-                                <div className="mb-4">
-                                    <FormLabel className="text-base sm:text-lg font-semibold">
-                                    Which of these best describe how you're feeling?
-                                    </FormLabel>
-                                    <p className="text-xs sm:text-sm text-muted-foreground">
-                                    Select all that apply.
-                                    </p>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-                                    {specificEmotionsOptions.map((item) => (
-                                    <FormField
-                                        key={item}
-                                        control={form.control}
-                                        name="specificEmotions"
-                                        render={({ field }) => (
-                                        <FormItem
-                                            key={item}
-                                            className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-black/5 rounded-lg"
-                                        >
-                                            <FormControl>
-                                            <Checkbox
-                                                checked={field.value?.includes(item)}
-                                                onCheckedChange={(checked) =>
-                                                checked
-                                                    ? field.onChange([
-                                                        ...(field.value ?? []),
-                                                        item,
-                                                    ])
-                                                    : field.onChange(
-                                                        field.value?.filter(
-                                                        (value) => value !== item
-                                                        )
-                                                    )
-                                                }
-                                            />
-                                            </FormControl>
-                                            <FormLabel className="font-normal text-sm sm:text-base">
-                                            {item}
-                                            </FormLabel>
-                                        </FormItem>
-                                        )}
-                                    />
-                                    ))}
-                                </div>
-                                <FormMessage className="pt-2" />
-                                </FormItem>
-                            )}
-                            />
-                            </ScrollArea>
-                        </motion.div>
-                        )}
-                    </AnimatePresence>
-                </CardContent>
+                </div>
+
+                <div className="relative z-10 flex flex-col h-full w-full">
+                  <div className="text-center pt-8">
+                      <h1 className="font-extrabold text-5xl sm:text-7xl md:text-8xl tracking-tighter text-foreground mb-4">How Do You Feel?</h1>
+                      <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+                          First, pick a broad category from the outer wheel, then a specific feeling from the inner wheel.
+                      </p>
+                  </div>
+                  <div className="flex-1 grid md:grid-cols-2 gap-4 md:gap-8 items-center overflow-hidden">
+                      <div className="relative w-full h-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] max-h-[300px] sm:max-h-[400px] md:max-h-[500px] mx-auto aspect-square">
+                          <FormField
+                              control={form.control}
+                              name="emotion"
+                              render={({ field }) => (
+                                  <FormItem className="w-full h-full">
+                                  <FormControl>
+                                      <EmotionWheelWrapper
+                                      selectedEmotion={field.value}
+                                      onSelectEmotion={field.onChange}
+                                      />
+                                  </FormControl>
+                                  <FormMessage className="text-center absolute -bottom-4 left-0 right-0" />
+                                  </FormItem>
+                              )}
+                          />
+                      </div>
+                      
+                      <AnimatePresence>
+                          {specificEmotionsOptions.length > 0 && (
+                          <motion.div
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              className="h-full flex flex-col justify-center"
+                          >
+                              <ScrollArea className="pr-4">
+                              <FormField
+                              control={form.control}
+                              name="specificEmotions"
+                              render={() => (
+                                  <FormItem>
+                                  <div className="mb-4">
+                                      <FormLabel className="text-base sm:text-lg font-semibold">
+                                      Which of these best describe how you're feeling?
+                                      </FormLabel>
+                                      <p className="text-xs sm:text-sm text-muted-foreground">
+                                      Select all that apply.
+                                      </p>
+                                  </div>
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                                      {specificEmotionsOptions.map((item) => (
+                                      <FormField
+                                          key={item}
+                                          control={form.control}
+                                          name="specificEmotions"
+                                          render={({ field }) => (
+                                          <FormItem
+                                              key={item}
+                                              className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-black/5 rounded-lg"
+                                          >
+                                              <FormControl>
+                                              <Checkbox
+                                                  checked={field.value?.includes(item)}
+                                                  onCheckedChange={(checked) =>
+                                                  checked
+                                                      ? field.onChange([
+                                                          ...(field.value ?? []),
+                                                          item,
+                                                      ])
+                                                      : field.onChange(
+                                                          field.value?.filter(
+                                                          (value) => value !== item
+                                                          )
+                                                      )
+                                                  }
+                                              />
+                                              </FormControl>
+                                              <FormLabel className="font-normal text-sm sm:text-base">
+                                              {item}
+                                              </FormLabel>
+                                          </FormItem>
+                                          )}
+                                      />
+                                      ))}
+                                  </div>
+                                  <FormMessage className="pt-2" />
+                                  </FormItem>
+                              )}
+                              />
+                              </ScrollArea>
+                          </motion.div>
+                          )}
+                      </AnimatePresence>
+                  </div>
+                </div>
                 <div className="absolute bottom-4 sm:bottom-6 left-0 right-0 flex justify-center">
                     <Button type="button" size="icon" variant="ghost" className="rounded-full h-12 w-12 animate-bounce" onClick={() => scrollTo(thoughtRef)}>
                         <ArrowDown />
@@ -371,78 +378,77 @@ export function CheckInForm() {
 
         {/* Step 3: Thoughts */}
         <StepSection ref={thoughtRef}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
-                <div className="p-4 md:p-8 h-full flex flex-col justify-center text-center md:text-left">
-                  <h1 className="font-extrabold text-5xl sm:text-7xl tracking-tighter text-foreground mb-4 sm:mb-6">
-                      Thinking Patterns
-                  </h1>
-                  <p className="text-base sm:text-lg text-muted-foreground max-w-md mx-auto md:mx-0">
-                      Take a moment to observe your thoughts. Recognize
-                      recurring patterns and their impact on your feelings and
-                      actions.
-                  </p>
-                </div>
-                <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full overflow-hidden">
-                  <Card className="w-full max-w-md bg-transparent border-0 shadow-none flex flex-col h-full relative overflow-hidden">
-                    <div className="relative z-10 flex flex-col h-full">
-                    <CardHeader>
-                        <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">Notice Your Thoughts</CardTitle>
-                        <CardDescription>
-                        What kind of thinking is happening?
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                        <ScrollArea className="h-full pr-3">
-                        <FormField
-                            control={form.control}
-                            name="thoughts"
-                            render={() => (
-                            <FormItem className="space-y-3">
-                                {thoughtPatterns.map((item) => (
-                                <FormField
-                                    key={item.id}
-                                    control={form.control}
-                                    name="thoughts"
-                                    render={({ field }) => (
-                                    <FormItem
-                                        key={item.id}
-                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-lg bg-black/5 p-3"
-                                    >
-                                        <FormControl>
-                                        <Checkbox
-                                            checked={
-                                            field.value?.includes(item.id)
-                                            }
-                                            onCheckedChange={(checked) =>
-                                            checked
-                                                ? field.onChange([
-                                                    ...(field.value ?? []),
-                                                    item.id,
-                                                ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                    (value) =>
-                                                        value !== item.id
-                                                    )
-                                                )
-                                            }
-                                        />
-                                        </FormControl>
-                                        <FormLabel className="font-normal text-sm sm:text-base">
-                                        {item.label}
-                                        </FormLabel>
-                                    </FormItem>
-                                    )}
-                                />
-                                ))}
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        </ScrollArea>
-                    </CardContent>
+            <div className="flex flex-col items-center justify-center h-full text-center relative">
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative w-full max-w-lg h-96">
+                        <div className="absolute inset-0 bg-gradient-to-tl from-green-400 via-yellow-400 to-blue-500 rounded-full blur-3xl opacity-50"></div>
                     </div>
-                  </Card>
+                </div>
+                <div className="relative z-10 w-full">
+                    <h1 className="font-extrabold text-5xl sm:text-7xl md:text-8xl tracking-tighter text-foreground mb-4">
+                        What's On Your Mind?
+                    </h1>
+                    <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+                        Observe your thoughts without judgment. What patterns do you notice? This helps in understanding your mental habits.
+                    </p>
+                    <Card className="w-full max-w-md mx-auto bg-background/80 backdrop-blur-sm border-0 shadow-none rounded-2xl flex flex-col max-h-[60vh]">
+                        <CardHeader>
+                            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">Notice Your Thinking Patterns</CardTitle>
+                            <CardDescription>
+                            What kind of thinking is happening right now? Select all that apply.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                            <ScrollArea className="h-full pr-3">
+                            <FormField
+                                control={form.control}
+                                name="thoughts"
+                                render={() => (
+                                <FormItem className="space-y-3">
+                                    {thoughtPatterns.map((item) => (
+                                    <FormField
+                                        key={item.id}
+                                        control={form.control}
+                                        name="thoughts"
+                                        render={({ field }) => (
+                                        <FormItem
+                                            key={item.id}
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-lg bg-black/5 p-3"
+                                        >
+                                            <FormControl>
+                                            <Checkbox
+                                                checked={
+                                                field.value?.includes(item.id)
+                                                }
+                                                onCheckedChange={(checked) =>
+                                                checked
+                                                    ? field.onChange([
+                                                        ...(field.value ?? []),
+                                                        item.id,
+                                                    ])
+                                                    : field.onChange(
+                                                        field.value?.filter(
+                                                        (value) =>
+                                                            value !== item.id
+                                                        )
+                                                    )
+                                                }
+                                            />
+                                            </FormControl>
+                                            <FormLabel className="font-normal text-sm sm:text-base">
+                                            {item.label}
+                                            </FormLabel>
+                                        </FormItem>
+                                        )}
+                                    />
+                                    ))}
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            </ScrollArea>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
             <CardFooter className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6">
@@ -460,3 +466,5 @@ export function CheckInForm() {
     </Form>
   );
 }
+
+    
