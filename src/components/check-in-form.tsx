@@ -8,7 +8,6 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { EmotionWheel } from "@/components/emotion-wheel";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,6 +41,7 @@ import { bodyParts, thoughtPatterns, emotionCategories } from "@/lib/data";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useWellnessLog } from "@/context/wellness-log-provider";
 import { useRouter } from "next/navigation";
+import { EmotionWheelWrapper } from "./emotion-wheel-wrapper";
 
 const sensationSchema = z.object({
   id: z.string(),
@@ -133,7 +133,7 @@ export function CheckInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <EmotionWheel
+                    <EmotionWheelWrapper
                       selectedEmotion={field.value}
                       onSelectEmotion={field.onChange}
                     />
