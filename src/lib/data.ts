@@ -87,6 +87,16 @@ export const emotions = [
   { name: 'Excited', color: '#ffd700' },
 ];
 
+export const emotionCategories = [
+  { name: "Happy", color: "#ff8c00", emotions: ["Playful", "Content", "Interested", "Proud", "Accepted", "Powerful", "Peaceful", "Trusting", "Optimistic"] },
+  { name: "Sad", color: "#c71585", emotions: ["Lonely", "Vulnerable", "Despair", "Guilty", "Depressed", "Hurt"] },
+  { name: "Disgusted", color: "#8a2be2", emotions: ["Disapproving", "Disappointed", "Awful", "Repelled"] },
+  { name: "Angry", color: "#483d8b", emotions: ["Critical", "Distant", "Frustrated", "Aggressive", "Mad", "Bitter", "Humiliated", "Let down"] },
+  { name: "Fearful", color: "#008080", emotions: ["Threatened", "Rejected", "Weak", "Insecure", "Anxious", "Scared"] },
+  { name: "Bad", color: "#2e8b57", emotions: ["Bored", "Busy", "Stressed", "Tired"] },
+  { name: "Surprised", color: "#ffd700", emotions: ["Startled", "Confused", "Amazed", "Excited"] },
+];
+
 export const thoughtPatterns = [
   { id: "planning", label: "Planning or problem-solving" },
   { id: "worrying", label: "Worrying about the future" },
@@ -101,7 +111,7 @@ export const initialLogEntries: LogEntry[] = [
   {
     id: "1",
     date: subDays(new Date(), 7).toISOString(),
-    emotion: "Sadness",
+    emotion: "Sad",
     sensations: [
       { id: "s1", location: "Chest", intensity: 7, notes: "Heaviness" },
     ],
@@ -138,7 +148,7 @@ export const initialLogEntries: LogEntry[] = [
   {
     id: "5",
     date: subDays(new Date(), 1).toISOString(),
-    emotion: "Anger",
+    emotion: "Angry",
     sensations: [
        { id: "s6", location: "Head", intensity: 6, notes: "Tension headache" },
        { id: "s7", location: "Shoulders", intensity: 7, notes: "Tightness" },
