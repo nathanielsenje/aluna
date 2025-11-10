@@ -7,7 +7,6 @@ import * as React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { HumanBodyWrapper } from "@/components/human-body-wrapper";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +43,7 @@ import { EmotionWheelWrapper } from "./emotion-wheel-wrapper";
 import { ScrollArea } from "./ui/scroll-area";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Image from 'next/image';
+import { Input } from "./ui/input";
 
 const sensationSchema = z.object({
   id: z.string(),
@@ -140,16 +140,13 @@ export function CheckInForm() {
     ref.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleBodyPartClick = (part: {slug: string, title: string}) => {
-    const capitalizedPart = capitalize(part.slug);
-    if (bodyParts.includes(capitalizedPart)) {
-         append({
-            id: `sensation-${Date.now()}`,
-            location: capitalizedPart,
-            intensity: 5,
-            notes: "",
-        });
-    }
+  const handleBodyPartClick = (part: string) => {
+    append({
+        id: `sensation-${Date.now()}`,
+        location: part,
+        intensity: 5,
+        notes: "",
+    });
   };
 
   return (
@@ -162,7 +159,7 @@ export function CheckInForm() {
                 <div className="p-4 md:p-8 h-full flex flex-col justify-center">
                 <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">Where Do You Feel It?</h1>
                 <p className="text-base sm:text-lg text-gray-600">
-                    Click on the body part to log a sensation. Reflect on your body and identify{" "}
+                    Click on a body part to log a sensation. Reflect on your body and identify{" "}
                     <span className="font-semibold">specific areas</span> where you experience discomfort or tension right now.
                 </p>
                 </div>
@@ -170,12 +167,22 @@ export function CheckInForm() {
                 <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full overflow-hidden">
                     <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-full">
                     <CardContent className="flex-1 flex flex-col gap-4 p-4 sm:p-6 overflow-hidden">
-                    <div className="relative w-full aspect-square mb-4 flex-shrink-0">
-                        <HumanBodyWrapper
-                            onClick={handleBodyPartClick}
-                        />
-                    </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <ScrollArea className="h-full max-h-[150px] md:max-h-[200px] pr-2">
+                                <div className="space-y-2">
+                                    {bodyParts.map(part => (
+                                        <Button key={part} type="button" variant="outline" className="w-full justify-start" onClick={() => handleBodyPartClick(part)}>
+                                            {part}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                            <div className="text-center flex flex-col justify-center items-center text-muted-foreground p-4 border rounded-lg">
+                                <p className="text-sm">Your logged sensations will appear here.</p>
+                            </div>
+                        </div>
                         <ScrollArea className="flex-grow">
+                        <AnimatePresence>
                         {fields.map((field, index) => (
                         <motion.div
                             key={field.id}
@@ -215,6 +222,19 @@ export function CheckInForm() {
                             />
                             <FormField
                                 control={form.control}
+                                name={`sensations.${index}.notes`}
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Sensation Notes</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g., tingling, sharp pain, warmth" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name={`sensations.${index}.intensity`}
                                 render={({ field }) => (
                                 <FormItem>
@@ -243,6 +263,7 @@ export function CheckInForm() {
                             </Button>
                         </motion.div>
                         ))}
+                        </AnimatePresence>
                         </ScrollArea>
                     </CardContent>
                     </Card>
