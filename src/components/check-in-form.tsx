@@ -157,8 +157,8 @@ export function CheckInForm() {
                   </div>
 
                   <div className="flex flex-col items-center justify-center p-4 h-full">
-                     <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl p-6 overflow-y-auto h-[80vh]">
-                       <CardContent className="space-y-4">
+                     <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl p-6 flex flex-col h-full">
+                       <CardContent className="space-y-4 flex-1 overflow-y-auto">
                         <div className="relative w-full aspect-[3/4] mb-4">
                              <div className="absolute inset-0 bg-gradient-to-br from-green-100 via-orange-100 to-teal-100 rounded-2xl opacity-50 blur-xl"></div>
                             <HumanBody className="absolute inset-0 w-full h-full text-gray-500 opacity-60" />
