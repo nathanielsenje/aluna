@@ -445,12 +445,17 @@ export function CheckInForm() {
             </div>
             <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6">
                 <Button
-                type="submit"
-                size="lg"
-                disabled={form.formState.isSubmitting}
-                className="font-bold"
+                    type="submit"
+                    size="icon"
+                    disabled={form.formState.isSubmitting}
+                    className="rounded-full h-14 w-14"
                 >
-                {form.formState.isSubmitting ? "Saving..." : "Save Entry"}
+                {form.formState.isSubmitting ? (
+                    <span className="animate-spin">...</span>
+                ) : (
+                    <Plus className="h-6 w-6" />
+                )}
+                <span className="sr-only">Save Entry</span>
                 </Button>
             </div>
         </StepSection>
@@ -458,5 +463,7 @@ export function CheckInForm() {
     </Form>
   );
 }
+
+    
 
     
