@@ -14,12 +14,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur">
-        <div className="container flex h-16 items-center">
-          <Link href="/" className="mr-auto flex items-center gap-2 font-bold text-lg tracking-tight">
+        <div className="container flex h-16 items-center justify-center">
+          <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight mr-8">
             <Icons.logo className="h-6 w-6"/>
             Mindful Charts
           </Link>
-          <nav className="ml-auto flex items-center gap-4 text-sm font-medium text-muted-foreground">
+          <nav className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
             <Link href="/" className={cn("transition-colors hover:text-foreground", pathname === "/" && "text-foreground")}>
               Check-in
             </Link>
