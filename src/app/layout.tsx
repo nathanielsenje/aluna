@@ -4,6 +4,7 @@ import './globals.css';
 import { AppShell } from '@/components/layout/app-shell';
 import { Toaster } from '@/components/ui/toaster';
 import { WellnessLogProvider } from '@/context/wellness-log-provider';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Aluna',
@@ -26,10 +27,17 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <WellnessLogProvider>
-          <AppShell>{children}</AppShell>
-          <Toaster />
-        </WellnessLogProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <WellnessLogProvider>
+            <AppShell>{children}</AppShell>
+            <Toaster />
+          </WellnessLogProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
