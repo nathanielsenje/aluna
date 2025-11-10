@@ -325,7 +325,7 @@ export function CheckInForm() {
                                         render={({ field }) => (
                                         <FormItem
                                             key={item}
-                                            className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-background/50 rounded-lg"
+                                            className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-black/5 rounded-lg"
                                         >
                                             <FormControl>
                                             <Checkbox
@@ -406,7 +406,7 @@ export function CheckInForm() {
                                     render={({ field }) => (
                                     <FormItem
                                         key={item.id}
-                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-lg bg-background/60 p-3"
+                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-lg bg-black/5 p-3"
                                     >
                                         <FormControl>
                                         <Checkbox
