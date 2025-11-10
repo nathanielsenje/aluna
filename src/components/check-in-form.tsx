@@ -151,12 +151,12 @@ export function CheckInForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="h-screen snap-y snap-mandatory overflow-y-scroll">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-screen snap-y snap-mandatory overflow-y-scroll overflow-x-hidden">
         
         {/* Step 1: Sensations */}
         <StepSection ref={sensationRef}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
-                <div className="p-4 md:p-8">
+                <div className="p-4 md:p-8 h-full flex flex-col justify-center">
                 <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">Where Do You Feel It?</h1>
                 <p className="text-base sm:text-lg text-gray-600">
                     Click on the body part to log a sensation. Reflect on your body and identify{" "}
@@ -361,7 +361,7 @@ export function CheckInForm() {
         {/* Step 3: Thoughts */}
         <StepSection ref={thoughtRef}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
-                <div className="p-4 md:p-8">
+                <div className="p-4 md:p-8 h-full flex flex-col justify-center">
                 <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">
                     Thinking Patterns
                 </h1>
