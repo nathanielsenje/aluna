@@ -69,7 +69,7 @@ type CheckInFormValues = z.infer<typeof formSchema>;
 
 function StepCard({ children, className }: { children: React.ReactNode, className?: string }) {
     return (
-        <div className={`w-full h-full flex flex-col bg-transparent p-6 ${className}`}>
+        <div className={`w-full h-full flex flex-col bg-transparent p-4 sm:p-6 ${className}`}>
             {children}
         </div>
     )
@@ -165,18 +165,18 @@ export function CheckInForm() {
             {/* Step 1: Sensations */}
             <CarouselItem className="h-full">
                <StepCard>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
-                  <div className="p-8 md:p-16">
-                    <h1 className="font-headline text-5xl md:text-7xl text-gray-700 mb-6">Where Do You Feel It?</h1>
-                    <p className="text-lg text-gray-600">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                  <div className="p-4 md:p-8">
+                    <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">Where Do You Feel It?</h1>
+                    <p className="text-base sm:text-lg text-gray-600">
                       Click on the body part to log a sensation. Reflect on your body and identify{" "}
                       <span className="font-semibold">specific areas</span> where you experience discomfort or tension right now.
                     </p>
                   </div>
 
-                   <div className="flex flex-col items-center justify-center p-4 h-full overflow-hidden">
+                   <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full overflow-hidden">
                      <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-full">
-                       <CardContent className="flex-1 flex flex-col gap-4 p-6 overflow-hidden">
+                       <CardContent className="flex-1 flex flex-col gap-4 p-4 sm:p-6 overflow-hidden">
                         <div className="relative w-full aspect-square mb-4 flex-shrink-0">
                            <HumanBody
                                 onClick={handleBodyPartClick}
@@ -255,7 +255,7 @@ export function CheckInForm() {
                      </Card>
                    </div>
                 </div>
-                 <CardFooter className="absolute bottom-6 right-6">
+                 <CardFooter className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6">
                   <Button type="button" size="lg" onClick={handleNext}>
                     Next <ArrowRight className="ml-2" />
                   </Button>
@@ -268,13 +268,13 @@ export function CheckInForm() {
               <StepCard>
                 <div className="flex flex-col h-full">
                     <CardHeader>
-                        <CardTitle>Select Your Emotion</CardTitle>
+                        <CardTitle className="text-2xl sm:text-3xl">Select Your Emotion</CardTitle>
                         <CardDescription>
                             First, pick a broad category, then a specific feeling.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="flex-1 grid md:grid-cols-2 gap-8 items-center overflow-hidden">
-                        <div className="relative w-full h-full max-w-[500px] max-h-[500px] mx-auto aspect-square">
+                    <CardContent className="flex-1 grid md:grid-cols-2 gap-4 md:gap-8 items-center overflow-hidden">
+                        <div className="relative w-full h-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] max-h-[300px] sm:max-h-[400px] md:max-h-[500px] mx-auto aspect-square">
                             <FormField
                                 control={form.control}
                                 name="emotion"
@@ -307,14 +307,14 @@ export function CheckInForm() {
                                 render={() => (
                                     <FormItem>
                                     <div className="mb-4">
-                                        <FormLabel className="text-lg font-semibold">
+                                        <FormLabel className="text-base sm:text-lg font-semibold">
                                         Which of these best describe how you're feeling?
                                         </FormLabel>
-                                        <p className="text-sm text-muted-foreground">
+                                        <p className="text-xs sm:text-sm text-muted-foreground">
                                         Select all that apply.
                                         </p>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                                         {specificEmotionsOptions.map((item) => (
                                         <FormField
                                             key={item}
@@ -342,7 +342,7 @@ export function CheckInForm() {
                                                     }
                                                 />
                                                 </FormControl>
-                                                <FormLabel className="font-normal">
+                                                <FormLabel className="font-normal text-sm sm:text-base">
                                                 {item}
                                                 </FormLabel>
                                             </FormItem>
@@ -374,18 +374,18 @@ export function CheckInForm() {
              {/* Step 3: Thoughts */}
             <CarouselItem className="h-full">
               <StepCard>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
-                  <div className="p-8 md:p-16">
-                    <h1 className="font-headline text-5xl md:text-7xl text-gray-700 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-center h-full">
+                  <div className="p-4 md:p-8">
+                    <h1 className="font-headline text-4xl sm:text-5xl md:text-7xl text-gray-700 mb-4 sm:mb-6">
                       Thinking Patterns
                     </h1>
-                    <p className="text-lg text-gray-600">
+                    <p className="text-base sm:text-lg text-gray-600">
                       Take a moment to observe your thoughts. Recognize
                       recurring patterns and their impact on your feelings and
                       actions.
                     </p>
                   </div>
-                  <div className="flex flex-col items-center justify-center p-4 h-full overflow-hidden">
+                  <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full overflow-hidden">
                     <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl flex flex-col h-full relative overflow-hidden">
                        {thinkingPatternImage && (
                         <Image
@@ -398,7 +398,7 @@ export function CheckInForm() {
                       )}
                       <div className="relative z-10 flex flex-col h-full">
                         <CardHeader>
-                          <CardTitle>Notice Your Thoughts</CardTitle>
+                          <CardTitle className="text-xl sm:text-2xl">Notice Your Thoughts</CardTitle>
                           <CardDescription>
                             What kind of thinking is happening?
                           </CardDescription>
@@ -440,7 +440,7 @@ export function CheckInForm() {
                                               }
                                             />
                                           </FormControl>
-                                          <FormLabel className="font-normal">
+                                          <FormLabel className="font-normal text-sm sm:text-base">
                                             {item.label}
                                           </FormLabel>
                                         </FormItem>
@@ -457,7 +457,7 @@ export function CheckInForm() {
                     </Card>
                   </div>
                 </div>
-                <CardFooter className="absolute bottom-6 right-6 justify-between w-[calc(100%-3rem)]">
+                <CardFooter className="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 justify-between w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)]">
                    <Button type="button" variant="outline" onClick={handlePrev}>
                     <ArrowLeft className="mr-2" /> Previous
                   </Button>
@@ -477,5 +477,3 @@ export function CheckInForm() {
     </Form>
   );
 }
-
-    

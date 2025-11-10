@@ -68,7 +68,7 @@ export function RecentCheckIns() {
             <CardContent>
                 <ChartContainer
                     config={emotionLegendConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square max-h-[200px]"
                 >
                     <PieChart>
                     <ChartTooltip
@@ -79,7 +79,7 @@ export function RecentCheckIns() {
                         data={emotionDistribution}
                         dataKey="value"
                         nameKey="name"
-                        innerRadius={50}
+                        innerRadius={40}
                         strokeWidth={5}
                     >
                         <ChartStyle />
