@@ -66,7 +66,7 @@ type CheckInFormValues = z.infer<typeof formSchema>;
 
 function StepCard({ children }: { children: React.ReactNode }) {
     return (
-        <Card className="w-full h-full flex flex-col border-0 bg-transparent shadow-none rounded-none">
+        <Card className="w-full h-full flex flex-col border-0 bg-transparent shadow-none rounded-none p-6">
             {children}
         </Card>
     )
@@ -140,9 +140,9 @@ export function CheckInForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="h-full">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="h-screen w-screen">
         <Carousel setApi={setApi} className="w-full h-full">
-          <CarouselContent>
+          <CarouselContent className="h-full">
             {/* Step 1: Sensations */}
             <CarouselItem className="h-full">
               <StepCard>
@@ -433,5 +433,3 @@ export function CheckInForm() {
     </Form>
   );
 }
-
-    
