@@ -233,7 +233,7 @@ export function CheckInForm() {
                                         exit={{ opacity: 0, scale: 0.5 }}
                                        >
                                         <Badge variant="secondary" className="text-base py-1 pl-3 pr-2 h-auto">
-                                          {field.location}: {field.intensity}/10
+                                          {field.location}: {field.intensity}/10 {field.notes && `- ${field.notes}`}
                                           <button type="button" onClick={() => remove(index)} className="ml-2 rounded-full hover:bg-black/10 p-0.5">
                                             <XIcon className="h-3 w-3" />
                                             <span className="sr-only">Remove {field.location}</span>
