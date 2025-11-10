@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="font-bold text-lg tracking-tight hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
             >
               <Link href={nextPath}>
-                Mindful Charts
+                Aluna
               </Link>
             </Button>
         </div>

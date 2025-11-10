@@ -1,6 +1,6 @@
-# Mindful Charts
+# Aluna
 
-Mindful Charts is a modern, minimalist web application designed to help you cultivate self-awareness and track your emotional and physical well-being over time. By providing a simple yet powerful interface for daily check-ins, the app empowers you to notice patterns, understand your feelings, and build a healthier relationship with your inner world.
+Aluna is a modern, minimalist web application designed to help you cultivate self-awareness and track your emotional and physical well-being over time. By providing a simple yet powerful interface for daily check-ins, the app empowers you to notice patterns, understand your feelings, and build a healthier relationship with your inner world.
 
 The application features a clean, multi-step interface that guides you through logging your physical sensations, identifying your emotions with a detailed three-level emotion wheel, and recognizing your current thought patterns. The data is then visualized on a personal dashboard, offering clear insights into your wellness journey.
 
@@ -41,11 +41,11 @@ To get a local copy up and running, follow these simple steps.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your_username_/mindful-charts.git
+   git clone https://github.com/your_username_/aluna.git
    ```
 2. Navigate to the project directory:
    ```sh
-   cd mindful-charts
+   cd aluna
    ```
 3. Install NPM packages:
    ```sh
@@ -61,3 +61,5 @@ npm run dev
 ```
 
 Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
+
+```

@@ -6,7 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { WellnessLogProvider } from '@/context/wellness-log-provider';
 
 export const metadata: Metadata = {
-  title: 'Mindful Charts',
+  title: 'Aluna',
   description: 'A wellness check-in app to chart your feelings over time.',
 };
 
