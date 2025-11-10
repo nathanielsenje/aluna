@@ -7,6 +7,7 @@ import * as React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import { HumanBody } from "@/components/human-body";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +34,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { submitLogEntry } from "@/lib/actions";
 import { bodyParts, thoughtPatterns, emotionCategories } from "@/lib/data";
@@ -47,7 +47,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { HumanBody } from "./human-body";
+import { ScrollArea } from "./ui/scroll-area";
 
 const sensationSchema = z.object({
   id: z.string(),
@@ -72,6 +72,8 @@ function StepCard({ children, className }: { children: React.ReactNode, classNam
         </div>
     )
 }
+
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export function CheckInForm() {
   const { toast } = useToast();
@@ -139,6 +141,18 @@ export function CheckInForm() {
     api?.scrollPrev();
   };
 
+  const handleBodyPartClick = (part: {slug: string, title: string}) => {
+    const capitalizedPart = capitalize(part.slug);
+    if (bodyParts.includes(capitalizedPart)) {
+         append({
+            id: `sensation-${Date.now()}`,
+            location: capitalizedPart,
+            intensity: 5,
+            notes: "",
+        });
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-screen h-screen">
@@ -151,22 +165,28 @@ export function CheckInForm() {
                   <div className="p-8 md:p-16">
                     <h1 className="font-headline text-5xl md:text-7xl text-gray-700 mb-6">Where Do You Feel It?</h1>
                     <p className="text-lg text-gray-600">
-                      Reflect on your body's sensations and identify{" "}
+                      Click on the body part to log a sensation. Reflect on your body and identify{" "}
                       <span className="font-semibold">specific areas</span> where you experience discomfort or tension right now.
                     </p>
                   </div>
 
                   <div className="flex flex-col items-center justify-center p-4 h-full">
                      <Card className="w-full max-w-md bg-white/50 backdrop-blur-sm rounded-2xl p-6 flex flex-col h-full">
-                       <CardContent className="space-y-4 flex-1 overflow-y-auto">
-                        <div className="relative w-full aspect-[3/4] mb-4">
-                             <div className="absolute inset-0 bg-gradient-to-br from-green-100 via-orange-100 to-teal-100 rounded-2xl opacity-50 blur-xl"></div>
-                            <HumanBody className="absolute inset-0 w-full h-full text-gray-500 opacity-60" />
+                       <CardContent className="flex-1 flex flex-col gap-4">
+                        <div className="relative w-full aspect-square mb-4 flex-shrink-0">
+                           <HumanBody
+                                onClick={handleBodyPartClick}
+                           />
                         </div>
+                         <ScrollArea className="flex-grow">
                           {fields.map((field, index) => (
-                            <div
+                            <motion.div
                               key={field.id}
-                              className="flex gap-4 items-start p-3 border rounded-lg bg-white/70"
+                              layout
+                              initial={{ opacity: 0, y: -20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, x: -20 }}
+                              className="flex gap-4 items-start p-3 border rounded-lg bg-white/70 mb-2"
                             >
                               <div className="grid gap-3 flex-1 w-full">
                                 <FormField
@@ -204,7 +224,7 @@ export function CheckInForm() {
                                       <FormLabel>Intensity: {field.value ?? 5}</FormLabel>
                                       <FormControl>
                                         <Slider
-                                          defaultValue={[5]}
+                                          value={[field.value]}
                                           max={10}
                                           step={1}
                                           onValueChange={(vals) => field.onChange(vals[0])}
@@ -224,25 +244,9 @@ export function CheckInForm() {
                                 <Trash2 className="h-4 w-4" />
                                 <span className="sr-only">Remove sensation</span>
                               </Button>
-                            </div>
+                            </motion.div>
                           ))}
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            onClick={() =>
-                              append({
-                                id: `sensation-${Date.now()}`,
-                                location: "",
-                                intensity: 5,
-                                notes: "",
-                              })
-                            }
-                          >
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            Add Sensation
-                          </Button>
+                          </ScrollArea>
                         </CardContent>
                      </Card>
                    </div>
