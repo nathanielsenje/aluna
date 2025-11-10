@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
 import {
   Form,
@@ -67,7 +67,7 @@ type CheckInFormValues = z.infer<typeof formSchema>;
 function StepCard({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex flex-col h-full w-full items-center justify-center p-2 sm:p-4 md:p-6">
-            <Card className="w-full max-w-4xl h-full flex flex-col">
+            <Card className="w-full h-full flex flex-col">
                 {children}
             </Card>
         </div>
@@ -435,3 +435,5 @@ export function CheckInForm() {
     </Form>
   );
 }
+
+    
