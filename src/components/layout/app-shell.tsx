@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -23,8 +24,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar>
+    <SidebarProvider defaultOpen={false}>
+      <Sidebar collapsible="icon">
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2 pr-4">
             <Icons.logo className="size-8 text-primary" />
@@ -41,7 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Link href="/">
                   <PenSquare />
-                  Check-in
+                  <span>Check-in</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -53,7 +54,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               >
                 <Link href="/dashboard">
                   <LineChart />
-                  Dashboard
+                  <span>Dashboard</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
