@@ -12,33 +12,132 @@ service cloud.firestore {
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
-    
-    // Anyone can create a user document for themselves, but no one can read, update or delete it.
+
+    function isTherapist(userId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(userId)/therapistAccess/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(userId)/therapistAccess/$(request.auth.uid)).data.status == 'active';
+    }
+
+    // User document - can create for self, but minimal read/write access
     match /users/{userId} {
       allow create: if isOwner(userId);
-      allow read, update, delete: if false;
+      allow read, update: if isOwner(userId);
+      allow delete: if false; // Prevent accidental deletion
 
       /**
        * Wellness Entries Subcollection
        *
        * Rules:
-       * - A user can create, read, list, update, and delete their own wellness entries.
-       * - No user can access another user's entries.
-       * - Ensures the written data matches the expected schema for a WellnessEntry.
+       * - Users can CRUD their own entries
+       * - Therapists with active access can read entries
+       * - Enhanced validation for Phase 1-3 fields (all optional except core)
        */
       match /wellnessEntries/{wellnessEntryId} {
-        allow read, list, delete: if isOwner(userId);
-        
+        allow read, list: if isOwner(userId) || isTherapist(userId);
+        allow delete: if isOwner(userId);
+
         allow create: if isOwner(userId)
                       && request.resource.data.date is timestamp
                       && request.resource.data.emotion is string
                       && request.resource.data.specificEmotions is list
                       && request.resource.data.sensations is list
-                      && request.resource.data.thoughts is list;
+                      && request.resource.data.thoughts is list
+                      && request.resource.data.version is int
+                      && request.resource.data.version >= 1;
 
         allow update: if isOwner(userId)
-                      && request.resource.data.id == resource.data.id; // ID is immutable
+                      && request.resource.data.id == resource.data.id
+                      && request.resource.data.version == resource.data.version; // Version immutable (except via migration)
       }
+
+      /**
+       * Goals Subcollection (Phase 2)
+       *
+       * Rules:
+       * - Users can CRUD their own goals
+       * - Validation for required fields
+       */
+      match /goals/{goalId} {
+        allow read, list: if isOwner(userId);
+        allow delete: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+                      && request.resource.data.title is string
+                      && request.resource.data.title.size() > 0
+                      && request.resource.data.status in ['active', 'completed', 'archived']
+                      && request.resource.data.progress >= 0
+                      && request.resource.data.progress <= 100;
+
+        allow update: if isOwner(userId)
+                      && request.resource.data.id == resource.data.id;
+      }
+
+      /**
+       * Insights Subcollection (Phase 2)
+       *
+       * Rules:
+       * - Users can read and update (dismiss) their insights
+       * - Only server (or user for testing) can create insights
+       * - Users can only update dismissed field
+       */
+      match /insights/{insightId} {
+        allow read, list: if isOwner(userId);
+        allow create: if isOwner(userId); // In production, restrict to server-side only
+        allow delete: if isOwner(userId);
+
+        allow update: if isOwner(userId)
+                      && request.resource.data.keys().hasOnly(['dismissed', 'dismissedAt', 'helpful', 'helpfulFeedbackAt', 'updatedAt'])
+                      && request.resource.data.dismissed is bool;
+      }
+
+      /**
+       * Therapist Access Subcollection (Phase 2)
+       *
+       * Rules:
+       * - Users can CRUD therapist access grants
+       * - Access includes expiration and revocation
+       */
+      match /therapistAccess/{accessId} {
+        allow read, list: if isOwner(userId);
+        allow create, update, delete: if isOwner(userId);
+      }
+
+      /**
+       * Shared Reports Subcollection (Phase 2)
+       *
+       * Rules:
+       * - Users can create and read their reports
+       * - Therapists with access can read reports
+       */
+      match /sharedReports/{reportId} {
+        allow read, list: if isOwner(userId) || isTherapist(userId);
+        allow create: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
+      /**
+       * User Profile Subcollection (Gamification)
+       *
+       * Rules:
+       * - One profile document per user (singleton at /users/{userId}/profile/userProfile)
+       * - Users can read and update their own profile
+       */
+      match /profile/userProfile {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    /**
+     * Therapist Collection (Phase 2)
+     *
+     * Rules:
+     * - Therapists can read their own access grants
+     * - Only cloud functions can write (server-side only)
+     */
+    match /therapists/{therapistEmail} {
+      allow read: if isSignedIn() && request.auth.token.email == therapistEmail;
+      allow write: if false; // Only via Cloud Functions/server-side
     }
   }
 }
