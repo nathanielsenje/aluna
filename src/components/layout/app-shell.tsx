@@ -21,6 +21,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
   const pathname = usePathname();
   const mainActionPath = user ? "/dashboard" : "/";
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
 
   // Hide check-in button on the form page itself
   const showCheckInButton = user && !pathname.startsWith('/check-in');
@@ -40,10 +46,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2">
-            {isUserLoading ? (
+            {isUserLoading || !isClient ? (
                <div className="flex items-center gap-2">
                 <Skeleton className="h-10 w-24" />
-                <Skeleton className="h-10 w-24" />
+                <Skeleton className="h-10 w-10 rounded-full" />
               </div>
             ) : !user ? (
               <>
@@ -55,7 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Button>
               </>
             ) : (
-                <>
+                <div className="flex items-center gap-2">
                   {showCheckInButton && (
                     <Button asChild>
                       <Link href="/check-in">New Check-in</Link>
@@ -91,7 +97,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </>
+                </div>
             )}
           </div>
         </div>
@@ -100,4 +106,3 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
