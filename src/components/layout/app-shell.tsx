@@ -27,8 +27,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
-        <div className="container flex h-16 items-center">
-          <div className="mr-auto flex items-center">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center">
             <Button
               asChild
               variant="link"
