@@ -1,11 +1,34 @@
 
+'use client';
+
 import { RecentCheckIns } from "./recent-check-ins";
 import { StatCards } from "./stat-cards";
 import { WellnessCharts } from "./wellness-charts";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex items-center justify-center h-full flex-1">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden flex-1">
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-tr from-pink-400 to-purple-500 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-400 to-blue-500 rounded-full blur-3xl opacity-30 translate-x-1/2 translate-y-1/2"></div>
       <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-tl from-yellow-300 to-orange-400 rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>

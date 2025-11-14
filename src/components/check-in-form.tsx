@@ -318,7 +318,7 @@ export function CheckInForm() {
                                       Select all that apply.
                                       </p>
                                   </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                                       {specificEmotionsOptions.map((item) => (
                                       <FormField
                                           key={item}
@@ -463,7 +463,3 @@ export function CheckInForm() {
     </Form>
   );
 }
-
-    
-
-    

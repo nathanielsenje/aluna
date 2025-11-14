@@ -10,14 +10,15 @@ import {
 } from '@/components/ui/card';
 import { Activity, Star, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { emotionCategories } from '@/lib/data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function StatCards() {
-  const { logEntries } = useWellnessLog();
+  const { logEntries, isLoading } = useWellnessLog();
 
   const summary = useMemo(() => {
-    if (logEntries.length === 0) {
+    if (!logEntries || logEntries.length === 0) {
       return {
         lastCheckIn: 'N/A',
         mostFrequentEmotion: 'N/A',
@@ -26,11 +27,11 @@ export function StatCards() {
     }
 
     const sortedEntries = [...logEntries].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()
     );
 
     const lastEntry = sortedEntries[0];
-    const lastCheckIn = formatDistanceToNow(new Date(lastEntry.date), {
+    const lastCheckIn = formatDistanceToNow(parseISO(lastEntry.date), {
       addSuffix: true,
     });
 
@@ -40,14 +41,14 @@ export function StatCards() {
       return acc;
     }, {} as Record<string, number>);
 
-    const mostFrequentEmotion = Object.entries(emotionCounts).sort(
-      (a, b) => b[1] - a[1]
-    )[0][0];
+    const mostFrequentEmotion = Object.entries(emotionCounts).length > 0 
+      ? Object.entries(emotionCounts).sort((a, b) => b[1] - a[1])[0][0]
+      : 'N/A';
 
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     const weeklyEntries = sortedEntries.filter(
-      (entry) => new Date(entry.date) > oneWeekAgo
+      (entry) => parseISO(entry.date) > oneWeekAgo
     );
 
     const totalIntensity = weeklyEntries.reduce((acc, entry) => {
@@ -58,6 +59,43 @@ export function StatCards() {
 
     return { lastCheckIn, mostFrequentEmotion, weeklyAverageIntensity };
   }, [logEntries]);
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Last Check-in</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-3/4 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Dominant Emotion</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-1/2 mb-2" />
+            <Skeleton className="h-4 w-3/4" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Weekly Sensation Avg.</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-8 w-1/2 mb-2" />
+            <Skeleton className="h-4 w-3/4" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

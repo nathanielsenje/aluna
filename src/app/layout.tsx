@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Toaster } from '@/components/ui/toaster';
 import { WellnessLogProvider } from '@/context/wellness-log-provider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'Aluna',
@@ -33,10 +34,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WellnessLogProvider>
-            <AppShell>{children}</AppShell>
-            <Toaster />
-          </WellnessLogProvider>
+          <FirebaseClientProvider>
+            <WellnessLogProvider>
+              <AppShell>{children}</AppShell>
+              <Toaster />
+            </WellnessLogProvider>
+          </FirebaseClientProvider>
         </ThemeProvider>
       </body>
     </html>

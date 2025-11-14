@@ -1,13 +1,18 @@
 
-"use client";
+'use client';
 
-import type { LogEntry } from "@/lib/data";
-import { initialLogEntries } from "@/lib/data";
-import * as React from "react";
+import type { LogEntry, Sensation } from '@/lib/data';
+import { useCollection, useFirestore, useUser } from '@/firebase';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
+import * as React from 'react';
+import { useMemo } from 'react';
+import { initialLogEntries } from '@/lib/data';
 
 type WellnessLogContextType = {
   logEntries: LogEntry[];
-  addLogEntry: (entry: Omit<LogEntry, "id" | "date">) => void;
+  addLogEntry: (entry: Omit<LogEntry, 'id' | 'date'>) => void;
+  isLoading: boolean;
 };
 
 export const WellnessLogContext = React.createContext<
@@ -19,46 +24,65 @@ export function WellnessLogProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [logEntries, setLogEntries] = React.useState<LogEntry[]>([]);
-  const [isInitialized, setIsInitialized] = React.useState(false);
+  const firestore = useFirestore();
+  const { user, isUserLoading } = useUser();
 
+  const wellnessEntriesRef = useMemo(() => {
+    if (!user) return null;
+    return collection(firestore, `users/${user.uid}/wellnessEntries`);
+  }, [user, firestore]);
+
+  const { data: logEntriesFromDb, isLoading: isLoadingEntries } = useCollection<Omit<LogEntry, 'id'>>(wellnessEntriesRef);
+
+  const [localEntries, setLocalEntries] = React.useState<LogEntry[]>([]);
+
+  // This effect synchronizes Firestore data with a local, mutable state.
+  // It also initializes with placeholder data if the user is not logged in.
   React.useEffect(() => {
-    try {
-      const item = window.localStorage.getItem("wellnessLog");
-      if (item) {
-        setLogEntries(JSON.parse(item));
-      } else {
-        // Initialize with default data if nothing is in local storage
-        setLogEntries(initialLogEntries);
-        window.localStorage.setItem("wellnessLog", JSON.stringify(initialLogEntries));
-      }
-    } catch (error) {
-      console.warn("Error reading from localStorage:", error);
-      setLogEntries(initialLogEntries);
+    if (user && logEntriesFromDb) {
+      // When logged in, use data from Firestore.
+      // Firebase timestamps need to be converted to JS Date objects then to ISO strings
+      const formattedEntries = logEntriesFromDb.map(entry => ({
+        ...entry,
+        // @ts-ignore
+        date: entry.date?.toDate ? entry.date.toDate().toISOString() : new Date().toISOString(),
+      }));
+      setLocalEntries(formattedEntries);
+    } else if (!isUserLoading && !user) {
+      // When not logged in, use initial placeholder data.
+      setLocalEntries(initialLogEntries);
     }
-    setIsInitialized(true);
-  }, []);
+  }, [logEntriesFromDb, user, isUserLoading]);
 
-  React.useEffect(() => {
-    if (isInitialized) {
-      try {
-        window.localStorage.setItem("wellnessLog", JSON.stringify(logEntries));
-      } catch (error) {
-        console.warn("Error writing to localStorage:", error);
-      }
+  const addLogEntry = (entry: Omit<LogEntry, 'id' | 'date'>) => {
+    if (!wellnessEntriesRef) {
+      console.error("Cannot add entry: user is not authenticated.");
+      // Fallback for local-only mode if desired
+      const newEntry: LogEntry = {
+        ...entry,
+        id: new Date().getTime().toString(),
+        date: new Date().toISOString(),
+      };
+      setLocalEntries((prev) => [newEntry, ...prev]);
+      return;
     }
-  }, [logEntries, isInitialized]);
-
-  const addLogEntry = (entry: Omit<LogEntry, "id" | "date">) => {
-    const newEntry: LogEntry = {
+    
+    const newEntryData = {
       ...entry,
-      id: new Date().getTime().toString(),
-      date: new Date().toISOString(),
+      date: serverTimestamp(),
     };
-    setLogEntries((prev) => [...prev, newEntry]);
+
+    // Use non-blocking add
+    addDocumentNonBlocking(wellnessEntriesRef, newEntryData)
+      .then(docRef => {
+        console.log("Document written with ID: ", docRef.id);
+        // Optimistically update local state if needed, though useCollection should handle it
+      });
   };
 
-  const value = { logEntries, addLogEntry };
+  const isLoading = isUserLoading || isLoadingEntries;
+
+  const value = { logEntries: localEntries, addLogEntry, isLoading };
 
   return (
     <WellnessLogContext.Provider value={value}>

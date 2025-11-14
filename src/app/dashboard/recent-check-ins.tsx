@@ -15,15 +15,15 @@ import {
   ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
-  ChartStyle,
 } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
 import type { ChartConfig } from "@/components/ui/chart";
 
 import { useMemo } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, parseISO } from 'date-fns';
 import { emotionCategories } from '@/lib/data';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const emotionLegendConfig = emotionCategories.reduce((acc, category) => {
     acc[category.name] = {
@@ -34,9 +34,10 @@ const emotionLegendConfig = emotionCategories.reduce((acc, category) => {
 }, {} as ChartConfig);
 
 export function RecentCheckIns() {
-  const { logEntries } = useWellnessLog();
+  const { logEntries, isLoading } = useWellnessLog();
 
   const sortedEntries = useMemo(() => {
+    if (!logEntries) return [];
     return [...logEntries]
       .sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -45,6 +46,7 @@ export function RecentCheckIns() {
   }, [logEntries]);
 
    const emotionDistribution = useMemo(() => {
+    if (!logEntries) return [];
     const emotionCounts = logEntries.reduce((acc, entry) => {
       const l1Emotion = emotionCategories.find(cat => cat.subCategories.some(sub => sub.name === entry.emotion))?.name || 'Unknown';
       acc[l1Emotion] = (acc[l1Emotion] || 0) + 1;
@@ -57,6 +59,43 @@ export function RecentCheckIns() {
       fill: emotionLegendConfig[name]?.color,
     }));
   }, [logEntries]);
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardHeader>
+          <CardContent className="flex items-center justify-center">
+            <Skeleton className="h-48 w-48 rounded-full" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-4 w-1/3" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4">
+                <Skeleton className="h-10 w-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+                <div className="ml-auto text-right space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-6">
@@ -81,9 +120,7 @@ export function RecentCheckIns() {
                         nameKey="name"
                         innerRadius={40}
                         strokeWidth={5}
-                    >
-                        <ChartStyle />
-                    </Pie>
+                    />
                     <ChartLegend
                         content={<ChartLegendContent nameKey="name" />}
                         className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/3 [&>*]:justify-center"
@@ -129,7 +166,7 @@ export function RecentCheckIns() {
                     </div>
                     <div className="ml-auto text-right">
                       <p className="text-sm font-medium">
-                        {formatDistanceToNow(new Date(entry.date), { addSuffix: true })}
+                        {formatDistanceToNow(parseISO(entry.date), { addSuffix: true })}
                       </p>
                        <p className="text-xs text-muted-foreground">
                         {entry.sensations.length} sensation{entry.sensations.length !== 1 && 's'}
