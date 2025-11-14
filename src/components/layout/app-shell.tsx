@@ -1,26 +1,25 @@
 
-"use client";
+'use client';
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "../ui/button";
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Paintbrush, WandSparkles, UserCircle } from "lucide-react";
-import { ThemeToggle } from "../theme-toggle";
-import { useUser } from "@/firebase";
-import { Skeleton } from "../ui/skeleton";
+} from '@/components/ui/dropdown-menu';
+import { Paintbrush, WandSparkles, UserCircle, LogIn, UserPlus } from 'lucide-react';
+import { ThemeToggle } from '../theme-toggle';
+import { useUser } from '@/firebase';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isUserLoading } = useUser();
   const pathname = usePathname();
-  const mainActionPath = user ? "/dashboard" : "/";
+  const mainActionPath = user ? '/dashboard' : '/';
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
@@ -46,20 +45,39 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2">
-            {isUserLoading || !isClient ? (
-               <div className="flex items-center gap-2">
-                <Skeleton className="h-10 w-24" />
-                <Skeleton className="h-10 w-10 rounded-full" />
-              </div>
+            {!isClient || isUserLoading ? (
+               <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
             ) : !user ? (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link href="/login">Sign In</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <UserCircle className="h-6 w-6" />
+                    <span className="sr-only">User Menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/login">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      <span>Sign In</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/signup">
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      <span>Sign Up</span>
+                    </Link>
+                  </DropdownMenuItem>
+                   <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <Paintbrush className="mr-2 h-4 w-4" />
+                      <span>Theme</span>
+                      <div className="ml-auto">
+                        <ThemeToggle />
+                      </div>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
                 <div className="flex items-center gap-2">
                   {showCheckInButton && (
