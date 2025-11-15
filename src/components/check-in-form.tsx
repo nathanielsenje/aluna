@@ -41,7 +41,7 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { ContextTagsSelector } from "./context-tags-selector";
 import { JournalEntryEditor } from "./journal-entry-editor";
-import { InteractiveBodyMap } from "./interactive-body-map-v2";
+import { InteractiveBodyMap, bodyPartMapping } from "./interactive-body-map-v2";
 import type { ContextTags } from "@/lib/types";
 
 const sensationSchema = z.object({
@@ -96,6 +96,8 @@ export function CheckInForm() {
     intensity: 5,
     notes: '',
   });
+
+  const [selectedRegionParts, setSelectedRegionParts] = React.useState<string[]>([]);
 
   const [copingSuggestions, setCopingSuggestions] = React.useState<any>(null);
   const [isLoadingCoping, setIsLoadingCoping] = React.useState(false);
@@ -237,7 +239,14 @@ export function CheckInForm() {
                             <div className="flex flex-col items-center">
                               <InteractiveBodyMap
                                 selectedPart={currentSensation.location}
-                                onPartSelect={(part) => setCurrentSensation(p => ({...p, location: part}))}
+                                onPartSelect={(part) => {
+                                  setCurrentSensation(p => ({...p, location: part}));
+                                  setSelectedRegionParts([]);
+                                }}
+                                onRegionSelect={(regionId, parts) => {
+                                  setSelectedRegionParts(parts);
+                                  setCurrentSensation(p => ({...p, location: ''}));
+                                }}
                               />
                             </div>
 
@@ -307,6 +316,44 @@ export function CheckInForm() {
                                           Cancel
                                         </Button>
                                       </div>
+                                    </CardContent>
+                                  </Card>
+                                </motion.div>
+                              ) : selectedRegionParts.length > 0 ? (
+                                <motion.div
+                                  initial={{ opacity: 0, scale: 0.95 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <Card className="border-primary/50 shadow-lg">
+                                    <CardContent className="p-4 space-y-4">
+                                      <div>
+                                        <h3 className="text-sm font-semibold text-muted-foreground mb-3">Select specific area:</h3>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          {selectedRegionParts.map((part) => (
+                                            <Button
+                                              key={part}
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => {
+                                                setCurrentSensation(p => ({...p, location: part}));
+                                                setSelectedRegionParts([]);
+                                              }}
+                                              className="text-xs"
+                                            >
+                                              {part}
+                                            </Button>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setSelectedRegionParts([])}
+                                        className="w-full text-xs"
+                                      >
+                                        Cancel
+                                      </Button>
                                     </CardContent>
                                   </Card>
                                 </motion.div>

@@ -9,11 +9,12 @@ import { Badge } from './ui/badge';
 interface InteractiveBodyMapProps {
   selectedPart: string;
   onPartSelect: (part: string) => void;
+  onRegionSelect?: (regionId: string, parts: string[]) => void;
   className?: string;
 }
 
 // Map our detailed body parts to the package's 13 regions
-const bodyPartMapping: Record<string, string[]> = {
+export const bodyPartMapping: Record<string, string[]> = {
   head: ['Head', 'Face', 'Eyes', 'Ears', 'Nose', 'Mouth', 'Jaw', 'Neck', 'Throat'],
   chest: ['Chest', 'Upper Back', 'Shoulders'],
   stomach: ['Stomach', 'Abdomen', 'Lower Back'],
@@ -46,11 +47,9 @@ const allBodyParts = Object.values(bodyPartMapping).flat().sort();
 export function InteractiveBodyMap({
   selectedPart,
   onPartSelect,
+  onRegionSelect,
   className
 }: InteractiveBodyMapProps) {
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [showPartSelector, setShowPartSelector] = useState(false);
-
   // Determine which region should be highlighted
   const getBodyParams = () => {
     const params: any = {};
@@ -63,36 +62,23 @@ export function InteractiveBodyMap({
       }
     }
 
-    // Highlight hovered region
-    if (selectedRegion && !selectedPart) {
-      params[selectedRegion] = { selected: true };
-    }
-
     return params;
   };
 
   // Handle click on body region
   const handleRegionClick = (regionId: string) => {
-    setSelectedRegion(regionId);
     const partsForRegion = bodyPartMapping[regionId] || [];
 
     // If only one part, select it directly
     if (partsForRegion.length === 1) {
       onPartSelect(partsForRegion[0]);
-      setShowPartSelector(false);
     } else {
-      // Show selector for multiple parts
-      setShowPartSelector(true);
+      // Notify parent about region selection for multi-part regions
+      if (onRegionSelect) {
+        onRegionSelect(regionId, partsForRegion);
+      }
     }
   };
-
-  const handlePartSelection = (part: string) => {
-    onPartSelect(part);
-    setShowPartSelector(false);
-    setSelectedRegion(null);
-  };
-
-  const selectedRegionParts = selectedRegion ? bodyPartMapping[selectedRegion] || [] : [];
 
   return (
     <div className={cn('flex flex-col items-center gap-4', className)}>
@@ -107,7 +93,7 @@ export function InteractiveBodyMap({
       </div>
 
       {/* Selected Part Display */}
-      {selectedPart && !showPartSelector && (
+      {selectedPart && (
         <div className="w-full">
           <Badge variant="default" className="w-full justify-center text-sm py-2">
             {selectedPart}
@@ -115,39 +101,8 @@ export function InteractiveBodyMap({
         </div>
       )}
 
-      {/* Part Selector for regions with multiple parts */}
-      {showPartSelector && selectedRegionParts.length > 0 && (
-        <div className="w-full space-y-2">
-          <p className="text-sm font-medium text-center">Select specific area:</p>
-          <div className="grid grid-cols-2 gap-2">
-            {selectedRegionParts.map((part) => (
-              <Button
-                key={part}
-                variant={selectedPart === part ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => handlePartSelection(part)}
-                className="text-xs"
-              >
-                {part}
-              </Button>
-            ))}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              setShowPartSelector(false);
-              setSelectedRegion(null);
-            }}
-            className="w-full text-xs"
-          >
-            Cancel
-          </Button>
-        </div>
-      )}
-
       {/* Instructions */}
-      {!showPartSelector && (
+      {!selectedPart && (
         <p className="text-xs text-muted-foreground text-center">
           Click on the body to select an area
         </p>
