@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runFlow } from 'genkit';
-import { recognizePatternsFlow } from '@/ai/flows';
+import { ai } from '@/ai/genkit';
+import { buildPatternsPrompt } from '@/ai/prompts/patterns-prompt';
+import { z } from 'zod';
+
+// Output schema for patterns
+const PatternSchema = z.object({
+  type: z.enum(['temporal', 'emotional', 'contextual', 'trend']),
+  title: z.string(),
+  description: z.string(),
+  confidence: z.enum(['high', 'medium', 'low']),
+  frequency: z.string(),
+  insight: z.string(),
+  dataPoints: z.array(z.string()),
+});
+
+const PatternsOutputSchema = z.object({
+  patterns: z.array(PatternSchema),
+  keyTakeaway: z.string(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,13 +31,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the Genkit flow using runFlow
-    const result = await runFlow(recognizePatternsFlow, {
+    // Build prompt and call AI directly
+    const prompt = buildPatternsPrompt({
       entries,
       daysAnalyzed: daysAnalyzed || 30,
     });
 
-    return NextResponse.json(result);
+    const result = await ai.generate({
+      model: 'googleai/gemini-1.5-flash',
+      prompt,
+      output: {
+        schema: PatternsOutputSchema,
+      },
+    });
+
+    return NextResponse.json(result.output);
   } catch (error: any) {
     console.error('Error recognizing patterns:', error);
     console.error('Error details:', error.message, error.stack);

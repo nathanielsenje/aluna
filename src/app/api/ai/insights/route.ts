@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runFlow } from 'genkit';
-import { generateInsightsFlow } from '@/ai/flows';
+import { ai } from '@/ai/genkit';
+import { buildInsightsPrompt } from '@/ai/prompts/insights-prompt';
+import { z } from 'zod';
+
+// Output schema for insights
+const InsightSchema = z.object({
+  type: z.enum(['positive', 'neutral', 'concern']),
+  title: z.string(),
+  description: z.string(),
+  evidence: z.string(),
+  suggestion: z.string().optional(),
+});
+
+const InsightsOutputSchema = z.object({
+  insights: z.array(InsightSchema),
+  summary: z.string(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,14 +29,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the Genkit flow using runFlow
-    const result = await runFlow(generateInsightsFlow, {
+    // Build prompt and call AI directly
+    const prompt = buildInsightsPrompt({
       entries,
       daysAnalyzed: daysAnalyzed || 7,
       userName,
     });
 
-    return NextResponse.json(result);
+    const result = await ai.generate({
+      model: 'googleai/gemini-1.5-flash',
+      prompt,
+      output: {
+        schema: InsightsOutputSchema,
+      },
+    });
+
+    return NextResponse.json(result.output);
   } catch (error: any) {
     console.error('Error generating insights:', error);
     console.error('Error details:', error.message, error.stack);

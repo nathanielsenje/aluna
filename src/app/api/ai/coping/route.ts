@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { runFlow } from 'genkit';
-import { suggestCopingFlow } from '@/ai/flows';
+import { ai } from '@/ai/genkit';
+import { buildCopingPrompt } from '@/ai/prompts/coping-prompt';
+import { z } from 'zod';
+
+// Output schema for coping strategies
+const CopingStrategySchema = z.object({
+  category: z.enum(['immediate', 'grounding', 'physical', 'cognitive', 'social', 'creative']),
+  title: z.string(),
+  description: z.string(),
+  duration: z.string(),
+  intensity: z.enum(['low', 'medium', 'high']),
+  bestFor: z.string(),
+});
+
+const CopingOutputSchema = z.object({
+  strategies: z.array(CopingStrategySchema),
+  priorityTip: z.string(),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,8 +36,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the Genkit flow using runFlow
-    const result = await runFlow(suggestCopingFlow, {
+    // Build prompt and call AI directly
+    const prompt = buildCopingPrompt({
       currentEmotion,
       specificEmotions,
       intensity,
@@ -29,7 +45,15 @@ export async function POST(request: NextRequest) {
       recentEntries,
     });
 
-    return NextResponse.json(result);
+    const result = await ai.generate({
+      model: 'googleai/gemini-1.5-flash',
+      prompt,
+      output: {
+        schema: CopingOutputSchema,
+      },
+    });
+
+    return NextResponse.json(result.output);
   } catch (error: any) {
     console.error('Error generating coping suggestions:', error);
     console.error('Error details:', error.message, error.stack);
