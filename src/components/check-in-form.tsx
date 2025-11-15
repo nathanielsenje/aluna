@@ -32,7 +32,6 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { submitLogEntry } from "@/lib/actions";
 import { bodyParts, thoughtPatterns, emotionCategories } from "@/lib/data";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useWellnessLog } from "@/context/wellness-log-provider";
 import { useRouter } from "next/navigation";
 import { EmotionWheelWrapper } from "./emotion-wheel-wrapper";
@@ -482,39 +481,41 @@ export function CheckInForm() {
                                         Select all that apply.
                                         </p>
                                     </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+                                    <div className="flex flex-wrap gap-2">
                                         {specificEmotionsOptions.map((item) => (
                                         <FormField
                                             key={item}
                                             control={form.control}
                                             name="specificEmotions"
-                                            render={({ field }) => (
-                                            <FormItem
-                                                key={item}
-                                                className="flex flex-row items-start space-x-3 space-y-0 p-3 bg-black/5 rounded-lg"
-                                            >
-                                                <FormControl>
-                                                <Checkbox
-                                                    checked={field.value?.includes(item)}
-                                                    onCheckedChange={(checked) =>
-                                                    checked
-                                                        ? field.onChange([
-                                                            ...(field.value ?? []),
-                                                            item,
-                                                        ])
-                                                        : field.onChange(
-                                                            field.value?.filter(
-                                                            (value) => value !== item
-                                                            )
-                                                        )
-                                                    }
-                                                />
-                                                </FormControl>
-                                                <FormLabel className="font-normal text-sm sm:text-base">
-                                                {item}
-                                                </FormLabel>
-                                            </FormItem>
-                                            )}
+                                            render={({ field }) => {
+                                                const isSelected = field.value?.includes(item);
+                                                return (
+                                                <FormItem key={item}>
+                                                    <FormControl>
+                                                    <Button
+                                                        type="button"
+                                                        variant={isSelected ? "default" : "outline"}
+                                                        size="sm"
+                                                        className={cn(
+                                                        "rounded-full px-4 transition-all",
+                                                        isSelected && "shadow-md"
+                                                        )}
+                                                        onClick={() => {
+                                                        if (isSelected) {
+                                                            field.onChange(
+                                                            field.value?.filter((value) => value !== item)
+                                                            );
+                                                        } else {
+                                                            field.onChange([...(field.value ?? []), item]);
+                                                        }
+                                                        }}
+                                                    >
+                                                        {item}
+                                                    </Button>
+                                                    </FormControl>
+                                                </FormItem>
+                                                );
+                                            }}
                                         />
                                         ))}
                                     </div>
@@ -559,42 +560,41 @@ export function CheckInForm() {
                                   name="thoughts"
                                   render={() => (
                                   <FormItem>
-                                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                       <div className="flex flex-wrap gap-2">
                                           {thoughtPatterns.map((item) => (
                                           <FormField
                                               key={item.id}
                                               control={form.control}
                                               name="thoughts"
-                                              render={({ field }) => (
-                                              <FormItem
-                                                  key={item.id}
-                                                  className="flex flex-row items-start space-x-3 space-y-0 rounded-lg bg-black/5 p-3"
-                                              >
-                                                  <FormControl>
-                                                  <Checkbox
-                                                      checked={
-                                                      field.value?.includes(item.id)
-                                                      }
-                                                      onCheckedChange={(checked) =>
-                                                      checked
-                                                          ? field.onChange([
-                                                              ...(field.value ?? []),
-                                                              item.id,
-                                                          ])
-                                                          : field.onChange(
-                                                              field.value?.filter(
-                                                              (value) =>
-                                                                  value !== item.id
-                                                              )
-                                                          )
-                                                      }
-                                                  />
-                                                  </FormControl>
-                                                  <FormLabel className="font-normal text-sm sm:text-base">
-                                                  {item.label}
-                                                  </FormLabel>
-                                              </FormItem>
-                                              )}
+                                              render={({ field }) => {
+                                                  const isSelected = field.value?.includes(item.id);
+                                                  return (
+                                                  <FormItem key={item.id}>
+                                                      <FormControl>
+                                                      <Button
+                                                          type="button"
+                                                          variant={isSelected ? "default" : "outline"}
+                                                          size="sm"
+                                                          className={cn(
+                                                          "rounded-full px-4 transition-all",
+                                                          isSelected && "shadow-md"
+                                                          )}
+                                                          onClick={() => {
+                                                          if (isSelected) {
+                                                              field.onChange(
+                                                              field.value?.filter((value) => value !== item.id)
+                                                              );
+                                                          } else {
+                                                              field.onChange([...(field.value ?? []), item.id]);
+                                                          }
+                                                          }}
+                                                      >
+                                                          {item.label}
+                                                      </Button>
+                                                      </FormControl>
+                                                  </FormItem>
+                                                  );
+                                              }}
                                           />
                                           ))}
                                       </div>
