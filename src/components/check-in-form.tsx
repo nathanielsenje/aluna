@@ -41,7 +41,7 @@ import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { ContextTagsSelector } from "./context-tags-selector";
 import { JournalEntryEditor } from "./journal-entry-editor";
-import { InteractiveBodyMap } from "./interactive-body-map";
+import { InteractiveBodyMap } from "./interactive-body-map-v2";
 import type { ContextTags } from "@/lib/types";
 
 const sensationSchema = z.object({
