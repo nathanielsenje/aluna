@@ -27,8 +27,9 @@ export function buildInsightsPrompt(input: InsightsInput): string {
       emotion: entry.emotion,
       specificEmotions: entry.specificEmotions || [],
       sensations: entry.sensations.map(s => ({
-        bodyPart: s.bodyPart,
-        intensity: s.intensity
+        location: s.location,
+        intensity: s.intensity,
+        notes: s.notes
       })),
       contextTags: entry.contextTags,
       hasJournal: !!entry.journalEntry,
